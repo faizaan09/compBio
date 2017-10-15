@@ -1,4 +1,4 @@
-
+# import pdb; pdb.set_trace()
 
 def getFirst(last):
 	count = {'A':0,'C':0,'G':0,'T':0}
@@ -8,11 +8,11 @@ def getFirst(last):
 			continue
 		count[alpha]+=1
 
-	first = [('$',0)]
+	first = ['$']
 
 	for k in sorted(count.keys()):
 		for i in range(count[k]):
-			first.append((k,i))
+			first.append(k)
 	return first
 
 
@@ -35,24 +35,28 @@ def lastToFirst(last, ind,first):
 
 def betterbwm(last,p):
 
-	# first = getFirst(last)
+	first = getFirst(last)
 	top  = 0
 	bottom = len(last)-1
+
 
 	cur_count = {'A':[0]*len(last),'C':[0]*len(last),'G':[0]*len(last),'T':[0]*len(last),'$':[0]*len(last)}
 	tot_count = {'A':0,'C':0,'G':0,'T':0,'$':0}
 
 	for i in range(len(last)):
 		tot_count[last[i]]+=1
-		cur_count[last[i]][i]= tot_count[last[i]]
+		cur_count['A'][i]= tot_count['A']
+		cur_count['C'][i]= tot_count['C']
+		cur_count['G'][i]= tot_count['G']
+		cur_count['T'][i]= tot_count['T']
 	# print cur_count
 
 	first_occ = {}
-	for i in range(len(last)):
+	for i in range(len(first)):
 		if set(first_occ.keys()) == set(['A','C','G','T','$']):
 			break
-		if last[i] not in first_occ:
-			first_occ[last[i]] = i
+		if first[i] not in first_occ: 
+			first_occ[first[i]] = i
 	# print first_occ
 
 
@@ -60,12 +64,12 @@ def betterbwm(last,p):
 		if p:
 			symbol = p.pop()
 			if symbol in last[top:bottom+1]:
-				top = first_occ[symbol] + cur_count[symbol][top]
+				top = first_occ[symbol] + cur_count[symbol][top]-1
 				bottom = first_occ[symbol] + cur_count[symbol][bottom]-1
 			else:
 				return 0
 		else:
-			return bottom- top +1
+			return bottom - top
 
 	return -1
 
@@ -73,11 +77,14 @@ def betterbwm(last,p):
 
 
 def main():
-	file_name = 'rosalind_ba9l.txt'
+	file_name = 'rosalind_ba9m.txt'
 	inp = """GGCGCCGC$TAGTCACACACGCCGTA
 ACC CCG CAG"""
-	# with open(file_name) as f:
-	# 	inp = f.read().strip()
+
+# 	inp = """ACCA$AA
+# ACA"""
+	with open(file_name) as f:
+		inp = f.read().strip()
 	
 	inp,patterns = inp.split("\n")
 	patterns = patterns.split(" ")
