@@ -24,13 +24,9 @@ def get_edit_distance(x,y):
 	for i in range(len(x)):
 		for j in range(len(y)):
 			temp = [ gap + opt[i+1][j], gap + opt[i][j+1], cost(x[i],y[j]) + opt[i][j]]
-			mini = temp.index(min(temp))
-			opt[i+1][j+1] = min(temp)
-			if mini == 2 and cost(x[i],y[j]) == 0:
-				map[i+1][j+1] = 3	
-			else:
-				map[i+1][j+1] = mini
-
+			mini = temp.index(max(temp))
+			opt[i+1][j+1] = max(temp)
+	
 	# print_opt(opt)
 	# print "\n\n\n"
 	# print_opt(map)
@@ -39,18 +35,18 @@ def get_edit_distance(x,y):
 
 def cost(x,y):
 	if x ==y:
-		return 0
-	else:
 		return 1
+	else:
+		return -2
 
-gap =1
+gap =-1
 
 def main():
-	file_name = 'rosalind_edta.txt'
-	inp = """>Rosalind_43
-PRETTY
->Rosalind_97
-PRTTEIN"""
+	file_name = 'rosalind_mgap.txt'
+	inp = """>Rosalind_92
+AACGTA
+>Rosalind_47
+ACACCTA"""
 	with open(file_name) as f:
 		inp = f.read().strip()
 	
@@ -60,8 +56,6 @@ PRTTEIN"""
 	y = y.split('\n')[1:]
 	y = ''.join(y)
 
-	# x = 'AAGGTATGAATC'
-	# y = 'AACGTTGAC'
 	opt,map = get_edit_distance(x,y)
 	# print_opt(map)
 
@@ -71,32 +65,10 @@ PRTTEIN"""
 	p_y = ""
 	c = 0
 
-	# while i>0 and j>0:
-	# 	cur = map[i][j]
-	# 	if cur == 0:
-	# 		p_x = "-" + p_x
-	# 		p_y = y[j-1] + p_y
-	# 		j-=1
-	# 		c+=1
-	# 	elif cur == 1:
-	# 		p_x = x[i-1] + p_x
-	# 		p_y = "_" + p_y
-	# 		i-=1
-	# 		c+=1
-	# 	else:
-	# 		if cur == 2:
-	# 			c+=1
-	# 		p_x = x[i-1] + p_x
-	# 		p_y = y[j-1] + p_y
-	# 		i-=1
-	# 		j-=1
-	
-	# print x
-	# print y
 	while i >0 and j>0:
 		cur = opt[i][j]
-		temp = [ gap + opt[i-1][j], gap + opt[i][j-1], cost(x[i-1],y[j-1]) + opt[i-1][j-1]] 
-		mini = temp.index(min(temp))
+		temp = [gap + opt[i][j-1], gap + opt[i-1][j], cost(x[i-1],y[j-1]) + opt[i-1][j-1]] 
+		mini = temp.index(max(temp))
 		# print mini
 		if mini == 2:
 			if cur != opt[i-1][j-1]:
@@ -106,7 +78,7 @@ PRTTEIN"""
 			i-=1
 			j-=1
 			continue
-		elif mini == 0:
+		elif mini == 1:
 			p_x = x[i-1] + p_x
 			p_y = "-" + p_y
 			i-=1
@@ -116,9 +88,7 @@ PRTTEIN"""
 			p_y = y[j-1] + p_y
 			j-=1
 			c+=1
-	print c
-	print p_x
-	print p_y
+	print p_x.count('-') + p_y.count('-')
 	
 
 if __name__ == '__main__':
